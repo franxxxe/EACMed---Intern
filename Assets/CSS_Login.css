@@ -1,0 +1,80 @@
+.login-root{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--BGColor1);
+}
+
+.form-login-div{
+  display: flex;
+  flex-direction: column;
+  height: 330px;
+  height: fit-content;
+  min-width: 400px;
+  max-width: 400px;
+  padding: 10px;
+  box-shadow: var(--BoxShadow1);
+  border: var(--Border1);
+  background-color: var(--BGColor2);
+}
+
+.form-login-div .input-div-icon{
+  border-right: var(--Border1);
+}
+
+/* .show-pass-div{
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.show-pass-div input[type="checkbox"] {
+  height: 29px;  width: 12px;
+  border: var(--Border1);
+} */
+
+
+
+
+
+
+.show-pass-div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+/* Hide the default checkbox */
+.show-pass-div input[type="checkbox"] {
+  height: 20px;
+  width: 20px;
+  -webkit-appearance: none; /* Remove default checkbox appearance */
+  -moz-appearance: none;
+  appearance: none;
+  border: var(--Border1, 2px solid #000); /* Border */
+  cursor: pointer;
+}
+
+/* Add a custom checkmark using ::after */
+.show-pass-div input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 6px;
+  width: 6px;
+  height: 12px;
+  border: solid var(--FontColor10);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+/* Optional: Add some styling to the label */
+.show-pass-div label {
+  cursor: pointer;
+}
