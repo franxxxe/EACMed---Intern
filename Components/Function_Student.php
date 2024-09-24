@@ -10,6 +10,11 @@ $Time = date("h:i:sa");
 $Day = date('l');
 
 
+function decrypt_user_id($encrypted_data) {
+  $encryption_key = 'your-encryption-key';
+  list($encrypted_user_id, $iv) = explode('::', base64_decode($encrypted_data), 2);
+  return openssl_decrypt($encrypted_user_id, 'aes-256-cbc', $encryption_key, 0, $iv);
+}
 
 
 
@@ -39,7 +44,6 @@ if (isset($_POST["username"])) {
   $stdEACId = $DateID . $randomNumber;
 
   if (!empty($username) && !empty($password) && !empty($stdLastName) && !empty($stdFirstName) && !empty($stdGender) && !empty($stdSchoolName) && !empty($stdCourse) && !empty($stdTrainingHours)) {
-
     $stmt = $connMysqli->prepare("SELECT * FROM student_tb WHERE student_username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -52,7 +56,9 @@ if (isset($_POST["username"])) {
       try {
         $InsertStudent = $connPDO->prepare("INSERT INTO student_tb (student_eac_id, student_firstname, student_lastname, student_gender, student_course, student_school, student_training_hrs, student_username, student_password) VALUES (?,?,?,?,?,?,?,?,?)");
         $InsertStudent->execute([$stdEACId, $stdFirstName, $stdLastName, $stdGender, $stdCourse, $stdSchoolName, $stdTrainingHours, $username, $hashed_password]);
+        $_SESSION['StudentSessionID'] = $stdEACId;
         echo json_encode(array("success" => true, "message" => "Account Successfully Registered"));
+
       } catch (PDOException $e) {
         echo json_encode(array("success" => false, "message" => "An error occurred. Please try again later."));
         error_log("Database error: " . $e->getMessage());
@@ -152,17 +158,6 @@ if (isset($_POST["submitAttendanceType"])) {
 
   // Validate and sanitize input
   if (!empty($attendance_timein) && !empty($attendance_timeout) && !empty($Date)) {
-      // $timeInObj = DateTime::createFromFormat('Y-m-d H:i:s', $attendance_timein);
-      // $timeOutObj = DateTime::createFromFormat('Y-m-d H:i:s', $attendance_timeout);
-      // $dateObj = DateTime::createFromFormat('Y-m-d', $Date);
-      
-      // // Check if the DateTime objects are valid
-      // if (!$timeInObj || !$timeOutObj || !$dateObj) {
-      //     echo "Invalid date or time format.";
-      //     exit;
-      // }
-
-      
       $timeInObj = new DateTime($attendance_timein);
       $timeOutObj = new DateTime($attendance_timeout);
 
@@ -176,9 +171,7 @@ if (isset($_POST["submitAttendanceType"])) {
       $hours = $interval->h;
       $minutes = $interval->i;
       $attendance_total = $hours . "hrs " . $minutes . "min";
-
-      // $attendance_date = $dateObj->format('F j, Y');
-      // $attendance_day = $dateObj->format('l');
+      echo $attendance_total;
       $dateObj = new DateTime($Date);
       $attendance_date = $dateObj->format('F j, Y');
 
@@ -203,6 +196,17 @@ if (isset($_POST["submitAttendanceType"])) {
   } else {
       echo "All fields are required.";
   }
+}
+
+
+
+
+
+
+if (isset($_POST["viewID"])) {
+  $encrypted_user_id = $_POST['StudentID'];
+  $decrypted_user_id = decrypt_user_id($encrypted_user_id);
+  echo "Decrypted User ID: " . $decrypted_user_id;
 }
 
 

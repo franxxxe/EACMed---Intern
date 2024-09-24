@@ -1,10 +1,16 @@
 <?php
   session_start();
   include "../Config/Configure.php";
-  if (isset($_SESSION['username'])) {
-    // echo "Success";
+  if (isset($_SESSION['StudentSessionID'])) {
+    function encrypt_user_id($user_id) {
+      $encryption_key = 'your-encryption-key';
+      $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+      $encrypted_user_id = openssl_encrypt($user_id, 'aes-256-cbc', $encryption_key, 0, $iv);
+      return base64_encode($encrypted_user_id . '::' . $iv);
+    }
+    $user_id = $_SESSION['StudentSessionID'];
+    $encrypted_user_id = encrypt_user_id($user_id);
   }else{
-    // echo "Failed";
     header('Location: ../Student Login');
     exit();
   }
@@ -28,7 +34,6 @@
       $remainingMinutes = $totalMinutes % 60;
     }
     $TotalDuration = $totalHours . "hrs " . $remainingMinutes . "min";
-    // echo "Total time: " . $totalHours . "hrs " . $remainingMinutes . "min";
   };
 
 ?>
@@ -50,13 +55,13 @@
     <!-- HEADER -->
       <div class="header-root">
         <div class="">
-          <h2><?php echo $_SESSION['username']; ?></h2>
           <h4>Alfelor, France Joshua</h4>
           <h4>BS - Information Technology</h4>
           <h4>National College of Science and Technology</h4>
         </div>
         <div class="">
           <button class="logout-link">Logout</button>
+          <button onclick="viewID('id')">View ID</button>
 
           
           <div class="theme-div">
@@ -195,7 +200,8 @@
                   <li><i>Date:</i><input type="date" name="" id="stdDate"></li>
                   <li><i>Time In:</i><input type="time" onchange="submit('record')" name="pick-time" id="stdTimeIn"></li>
                   <li><i>Time Out:</i><input type="time" onchange="submit('record')" name="pick-time" id="stdTimeOut"></li>
-                  <li><i></i><p>Total: <span id="TotalWorked"> 0hrs 0min</span> | Status: Late</p> </li>
+                  <!-- <li><i></i><p>Total: <span id="TotalWorked"> 0hrs 0min</span> | Status: Late</p> </li> -->
+                  <li><i></i><p>Total: <span id="TotalWorked"> 0hrs 0min</span> </p> </li>
                 </ul>
 
                 <div class="remarks-container">
@@ -213,5 +219,6 @@
      </div>
     <!-- END -->
   </div>
+  <script>var StudentID = '<?= $encrypted_user_id ?>';</script>
 </body>
 </html>
