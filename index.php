@@ -14,31 +14,33 @@
 <body>
 
   <div class="index-root">
-    <div class="header-root">
-      <div class="logo-div">
-        <img src="./Assets/Images/EACMC_LOGO2.png" alt="">
-      </div>
-      <div class="nav-div">
-        <ul>
-          <li onclick="navigate('home')">Home</li>
-          <li onclick="navigate('intern')">Intern</li>
-          <li onclick="navigate('immersion')">Immersion</li>
-          <li onclick="navigate('admin')">Admin</li>
-        </ul>
-      </div>
-      <div class="right-div">
-        <div class="right-child">
-          <button class="StudentSignIn-Link">Login</button>
-          <!-- <button>Sign up</button> -->
-          <div class="theme-div">
-            <div class="mode-div">
-              <?php include "./Assets/SVG/dark_mode.svg"?>
-              <?php include "./Assets/SVG/light_mode.svg"?>
+    <!-- HEADER -->
+      <div class="header-root">
+        <div class="logo-div">
+          <img src="./Assets/Images/EACMC_LOGO2.png" alt="">
+        </div>
+        <div class="nav-div">
+          <ul>
+            <li onclick="navigate('home')">Home</li>
+            <li onclick="navigate('intern')">Intern</li>
+            <li onclick="navigate('immersion')">Immersion</li>
+            <li onclick="navigate('admin')">Admin</li>
+          </ul>
+        </div>
+        <div class="right-div">
+          <div class="right-child">
+            <button class="StudentSignIn-Link">Login</button>
+            <!-- <button>Sign up</button> -->
+            <div class="theme-div">
+              <div class="mode-div">
+                <?php include "./Assets/SVG/dark_mode.svg"?>
+                <?php include "./Assets/SVG/light_mode.svg"?>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    <!-- END -->
 
     <div class="main-root">
       <!-- MAIN CHILD -->
@@ -523,18 +525,5 @@
       <!-- END -->
     </div>
   </div>
-
-</style>
-
-
-
-
-
-
-
-<!-- <h1 id="greet">Hello World</h1>
-<button onclick="changeVar('World')">Button - World</button>
-<button onclick="changeVar('France')">Button - France</button>
-<button onclick="removeStoreVal('Remove')">Button - Remove</button> -->  
 </body>
 </html>

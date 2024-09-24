@@ -35,20 +35,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardWidth = boxCards[0].offsetWidth + parseInt(getComputedStyle(boxCards[0]).marginRight);
   let currentIndex = 0;
   function scrollToCard(index) {
-      if (index < 0) index = 0;
-      if (index >= boxCards.length) index = boxCards.length - 1;
-      scrollContainer.scrollLeft = index * cardWidth;
-      currentIndex = index;
+    if (index < 0) index = 0;
+    if (index >= boxCards.length) index = boxCards.length - 1;
+    scrollContainer.scrollLeft = index * cardWidth;
+    currentIndex = index;
   }
   nextButton.addEventListener('click', () => {
-      if (currentIndex < boxCards.length - 1) {
-          scrollToCard(currentIndex + 4);
-      }
+    if (currentIndex < boxCards.length - 1) {
+      scrollToCard(currentIndex + 4);
+      console.log("next");
+    }
   });
   prevButton.addEventListener('click', () => {
-      if (currentIndex > 0) {
-          scrollToCard(currentIndex - 4);
-      }
+    if (currentIndex > 0) {
+      scrollToCard(currentIndex - 4);
+      console.log("prev");
+    }
   });
   scrollToCard(currentIndex);
 });

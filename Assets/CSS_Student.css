@@ -1,0 +1,278 @@
+.student-root{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--BGColor1);
+  transition: 1s ease;
+  overflow: auto;
+}
+
+
+.header-root{
+  min-height: 150px;
+  max-height: 150px;
+  border-bottom: var(--Border1);
+  background-color: var(--BGColor2);
+}
+
+
+.main-root{
+  height: 100%;
+  width: 100%;
+  background-color: var(--BGColor1);
+  display: flex;
+  flex-direction: column;
+  overflow: auto ;
+}
+
+.main-root-flex{
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+
+.main-child-1{
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  height: 100%;
+  width: 100%;
+}
+
+.tables-navigation{
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--BGColor2);
+}
+
+.tables-navigation-left{
+  padding: 3px;
+}
+
+.tables-navigation-left input{
+  border: var(--Border1);
+}
+
+.ul-navigation ul{
+  display: flex;
+}
+
+
+
+.ul-navigation ul li{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  min-width: 120px;
+  padding: 0 20px;
+  border-left: var(--Border1);
+  cursor: pointer;
+  background-color: var(--BGColor1);
+}
+
+.active-li{
+  border-bottom: none;
+}
+  
+.inactive-li{
+  border-bottom: var(--Border1);
+  opacity: .5;
+  border-bottom: var(--Border1);
+}
+
+.table-container{
+  height: 100%;
+}
+
+.table-container .table-2{
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  /* justify-content: space-between; */
+}
+
+.table-2-div{
+  height: 100%;
+  overflow: auto;
+}
+
+/* .table-container .table-2 table{
+  height: 100%;
+} */
+
+.table-2-stats{
+  min-height: 220px;
+  max-height: 220px;
+  width: 100%;
+  box-shadow: var(--BoxShadow2);
+}
+
+
+.main-child-2{
+  height: 100%;
+  min-width: 400px;
+  max-width: 400px;
+  border-left: var(--Border1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: auto;
+}
+
+.stats-div{
+  padding: 5px;
+}
+
+.stats-div ul{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+}
+.stats-div ul li{
+  display: flex;
+  align-items: center;
+}
+.stats-div ul li i{
+  min-width: 140px;
+}
+
+
+.add-attendance-container{
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  align-items: end;
+  justify-content: end;
+  height: 100%;
+  border-top: var(--Border1);
+  background-color: var(--BGColor1);
+}
+
+.add-attendance-container .button-div{
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  box-shadow: var(--BoxShadow2);
+  background-color: var(--BGColor1);
+  z-index: 2;
+}
+
+.button-div button{
+  transition: 1s ease;
+  text-align: center;
+}
+
+.btnSaveAttendance{
+  display: none;
+}
+
+
+.addHidden-container{
+  display: flex;
+  flex-direction: column;
+  height: 0px;
+  width: 100%;
+  overflow: auto;
+  /* opacity: 0; */
+  transition: opacity 10s ease;
+  transition: height 1s ease;
+  background-color: var(--BGColor1);
+  z-index: 1;
+}
+
+
+.addHidden-container ul{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.addHidden-container ul li{
+  display: flex;
+  align-items: center;
+}
+
+.addHidden-container ul li i{
+  min-width: 110px;
+}
+
+.addHidden-container input{
+  width: 100%;
+  padding: 5px;
+  border: var(--Border1);
+  background-color: var(--BGColor2);
+}
+
+.remarks-container{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 10px;
+}
+
+.remarks-div{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 5px;
+  border: var(--Border1);
+  background-color: var(--BGColor2);
+}
+
+.remarks-div textarea{
+  all: unset;
+  height: 100%;
+  border: var(--Border1);
+  padding: 5px;
+}
+
+.remarks-div p{
+  text-align: justify;
+}
+
+
+.add-attendance-container .overlay-div{
+  position: absolute;
+  width: 400px;
+  height: 200px;
+  top: 160px;
+  z-index: 0;
+  opacity: .7;
+}
+
+.add-attendance-container .overlay-div img{
+  width: 400px;
+}
+
+
+tbody i{
+  font-size: 13px;
+  /* text-align: left; */
+}
+.td-flex-parent{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.td-flex-child{
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+}
+
+/* tbody tr td:first-child{
+  text-align: left;
+} */
