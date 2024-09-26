@@ -71,7 +71,7 @@ $(".register-link").click(function(){
 })
 
 $(".logout-link").click(function(){
-  location.href = "../";
+  location.href = "../Components/logout_student.php";
 })
 
 

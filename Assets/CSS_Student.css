@@ -97,6 +97,7 @@
 .table-2-div{
   height: 100%;
   overflow: auto;
+  background-color: var(--BGColor2);
 }
 
 /* .table-container .table-2 table{
@@ -104,10 +105,41 @@
 } */
 
 .table-2-stats{
-  min-height: 220px;
-  max-height: 220px;
+  min-height: 230px;
+  max-height: 230px;
   width: 100%;
   box-shadow: var(--BoxShadow2);
+  border-top: var(--Border1);
+  padding: 10px;
+  animation-name: table-2-stats;
+  animation-duration: 1.4s;
+  /* transition: height 1.5s ease; */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+@keyframes table-2-stats {
+  0%{
+    min-height: 20px;
+    max-height: 20px;
+    padding: 0px 10px;
+  }
+}
+
+.table-2-statsDiv{
+  border: var(--Border1);
+  padding: 0 2px 2px 2px;
+  overflow: hidden;
+}
+
+.tbody-2-stats th,
+.tbody-2-stats td{
+  border: var(--Border1);
+}
+
+.tbody-2-stats{
+  overflow: auto;
 }
 
 
@@ -121,6 +153,8 @@
   position: relative;
   overflow: auto;
 }
+
+
 
 .stats-div{
   padding: 5px;
@@ -266,13 +300,41 @@ tbody i{
 }
 
 .td-flex-child{
-  width: fit-content;
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: start;
+  min-width: 170px;
+}
+
+.td-flex-child i{
+  display: flex;
+  align-items: center ;
+}
+
+.td-flex-child i svg{
+  margin-left: -5px;
 }
 
 /* tbody tr td:first-child{
   text-align: left;
 } */
+
+.tr-attendance li{
+  display: flex;
+  align-items: center;
+}
+
+.tr-attendance li i{
+  min-width: 70px;
+  text-align: left;
+}
+
+.tr-attendance svg{
+  height: 18px;
+}
+
+.tr-attendance button{  
+  max-width: 30px;
+  min-width: 30px;
+}

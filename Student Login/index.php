@@ -31,7 +31,7 @@
           <div class="input-div-icon">
             <?php include "../Assets/SVG/account_circle.svg"?>
           </div>
-          <input type="text" onkeyup="inputText('LoginUsername')" id="" class="input-text input-LoginUsername">
+          <input type="text" onkeyup="inputText('LoginUsername')" id="stdUsername" class="input-text input-LoginUsername">
           <i class="input-label label-LoginUsername">Username</i>
         </div>
         <br>
@@ -39,7 +39,7 @@
           <div class="input-div-icon">
             <?php include "../Assets/SVG/key.svg"?>
           </div>
-          <input type="password" onkeyup="inputText('LoginPassword')" class="input-text input-LoginPassword passwordInput" id="">
+          <input type="password" onkeyup="inputText('LoginPassword')" class="input-text input-LoginPassword passwordInput" id="stdPassword">
           <i class="input-label label-LoginPassword">Password</i>
         </div>
         <div class="show-pass-div">
@@ -52,7 +52,7 @@
             <p>Incorrect Username or Password!</p>
           </div>
         </div>
-        <button type="submit">Login</button>
+        <button type="button" id="login">Login</button>
         <!-- <button type="submit" class="login-link">Login</button> -->
 
 
@@ -64,5 +64,6 @@
     </form>
 
   </div>
+  <?php include "../Components/Prompt_Message.php"?>
 </body>
 </html>

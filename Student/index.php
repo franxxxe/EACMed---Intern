@@ -2,26 +2,45 @@
   session_start();
   include "../Config/Configure.php";
   if (isset($_SESSION['StudentSessionID'])) {
+    $user_id = $_SESSION['StudentSessionID'];
+    // ENCRYPT ID
     function encrypt_user_id($user_id) {
       $encryption_key = 'your-encryption-key';
       $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
       $encrypted_user_id = openssl_encrypt($user_id, 'aes-256-cbc', $encryption_key, 0, $iv);
       return base64_encode($encrypted_user_id . '::' . $iv);
     }
-    $user_id = $_SESSION['StudentSessionID'];
+    // DECRYPT ID
+    function decrypt_user_id($encrypted_data) {
+      $encryption_key = 'your-encryption-key';
+      list($encrypted_user_id, $iv) = explode('::', base64_decode($encrypted_data), 2);
+      return openssl_decrypt($encrypted_user_id, 'aes-256-cbc', $encryption_key, 0, $iv);
+    }
     $encrypted_user_id = encrypt_user_id($user_id);
+    $decrypted_user_id = decrypt_user_id($encrypted_user_id);
+
+    // FETCH STUDENT
+    $FetchStudent = "SELECT * FROM student_tb WHERE student_eac_id = '$decrypted_user_id' ";
+    $FetchStudent = mysqli_query($connMysqli, $FetchStudent);
+    if ($FetchStudent->num_rows > 0) {
+      while ($rowTotal = $FetchStudent->fetch_assoc()) {
+        $TrainingHours = $rowTotal['student_training_hrs'];
+      }
+    };
   }else{
     header('Location: ../Student Login');
     exit();
   }
 
-  $FetchTotalHours = "SELECT * FROM attendance_tb ";
+
+  // FETCH RENDERED HOURS
+  $FetchTotalHours = "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Approved'";
   $FetchTotalHours = mysqli_query($connMysqli, $FetchTotalHours);
   $dataArray = [];
-  $TotalDuration = "0hrs";
+  $TotalRenderedDuration = "0hrs 0min";
   if ($FetchTotalHours->num_rows > 0) {
     while ($rowTotal = $FetchTotalHours->fetch_assoc()) {
-      $dataArray[] = $rowTotal['attendance_total'];
+      $dataArray[] = $rowTotal['attendance_rendered'];
       $totalMinutes = 0;
 
       foreach ($dataArray as $duration) {
@@ -33,8 +52,120 @@
       $totalHours = floor($totalMinutes / 60);
       $remainingMinutes = $totalMinutes % 60;
     }
-    $TotalDuration = $totalHours . "hrs " . $remainingMinutes . "min";
+    $TotalRenderedDuration = $totalHours . "hrs " . $remainingMinutes . "min";
   };
+
+
+  // FETCH PENDING HOURS
+  $FetchPendingHours = "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Pending'";
+  $FetchPendingHours = mysqli_query($connMysqli, $FetchPendingHours);
+  $pendingArray = [];
+  $TotalPendingDuration = "0hrs 0min";
+  $PendingHrs = "0hrs 0min";
+  if ($FetchPendingHours->num_rows > 0) {
+    while ($rowTotal = $FetchPendingHours->fetch_assoc()) {
+      $pendingArray[] = $rowTotal['attendance_total'];
+      $totalMinutes = 0;
+
+      foreach ($pendingArray as $duration) {
+        preg_match('/(\d+)hrs (\d+)min/', $duration, $matches);
+        $hours = (int)$matches[1];
+        $minutes = (int)$matches[2];
+        $totalMinutes += ($hours * 60) + $minutes;
+      }
+      $totalHours = floor($totalMinutes / 60);
+      $remainingMinutes = $totalMinutes % 60;
+    }
+    $TotalPendingDuration = $totalHours . "hrs " . $remainingMinutes . "min";
+    $PendingHrs = $totalHours . "hrs " . $remainingMinutes . "min";
+  };
+
+
+  // FETCH TENTATIVE HOURS
+  $FetchTentativeHours = "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' ";
+  $FetchTentativeHours = mysqli_query($connMysqli, $FetchTentativeHours);
+  $tentativeArray = [];
+  $TotalTentativeDuration = "0hrs 0min";
+  if($TotalPendingDuration == "0hrs 0min"){
+    $TotalTentativeDuration = "0hrs 0min";
+  }
+  else{
+    if ($FetchTentativeHours->num_rows > 0) {
+      while ($rowTotal = $FetchTentativeHours->fetch_assoc()) {
+        $tentativeArray[] = $rowTotal['attendance_total'];
+        $totalMinutes = 0;
+  
+        foreach ($tentativeArray as $duration) {
+          preg_match('/(\d+)hrs (\d+)min/', $duration, $matches);
+          $hours = (int)$matches[1];
+          $minutes = (int)$matches[2];
+          $totalMinutes += ($hours * 60) + $minutes;
+        }
+        $totalHours = floor($totalMinutes / 60);
+        $remainingMinutes = $totalMinutes % 60;
+      }
+      $TotalTentativeDuration = $totalHours . "hrs " . $remainingMinutes . "min";
+    };
+  }
+
+
+  // CALCULATE REMAINING HOURS
+  function convertToMinutes($time) {
+    preg_match('/(\d+)hrs\s*(\d+)min/', $time, $matches);
+    return $matches[1] * 60 + $matches[2];
+  }
+
+  function formatDuration($totalMinutes) {
+    $hours = floor($totalMinutes / 60);
+    $minutes = $totalMinutes % 60;
+    return "{$hours}hrs {$minutes}min";
+  }
+
+  $TrainingHoursConverted = $TrainingHours . "hrs 0min";
+  $TrainingHoursInMinutes = convertToMinutes($TrainingHoursConverted);
+  $TrainingHoursInMinutes1 = convertToMinutes($TrainingHoursConverted);
+  $PendingHrsInMinutes = convertToMinutes($TotalPendingDuration);
+  $TentativeHrsInMinutes = convertToMinutes($TotalTentativeDuration);
+  $RenderedHrsInMinutes = convertToMinutes($TotalRenderedDuration);
+
+  $CalcPending = $TrainingHoursInMinutes1 - $PendingHrsInMinutes;
+  $CalcTentative = $TrainingHoursInMinutes1 - $TentativeHrsInMinutes;
+  $CalcRendered = $TrainingHoursInMinutes - $RenderedHrsInMinutes;
+
+  $RemainingHrsPending = formatDuration($CalcPending);
+  $RemainingHrsTentative = formatDuration($CalcTentative);
+  $RemainingHrsRendered = formatDuration($CalcRendered);
+
+  // CALCULATE REMAINING DAYS
+  $PendingRemainingDays = floor(($CalcPending / 60) / 8) . "Day/s";
+  $TentativeRemainingDays = floor(($CalcTentative / 60) /8) . "Day/s";
+  $RenderedRemainingDays = floor(($CalcRendered / 60) / 8) . "Day/s";
+
+  // COUNT DAYS TENTATIVE
+  $CountDayTentative = mysqli_query($connMysqli, "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' ");
+  $CountDayTentative = mysqli_num_rows($CountDayTentative);
+
+  // COUNT DAYS RENDERED
+  $CountDayRendered = mysqli_query($connMysqli, "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Approved' ");
+  $CountDayRendered = mysqli_num_rows($CountDayRendered);
+
+  // COUNT DAYS PENDING
+  $CountDayPending = mysqli_query($connMysqli, "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Pending' ");
+  $CountDayPending = mysqli_num_rows($CountDayPending);
+
+  // COUNT LATE
+  $CountDayLate = mysqli_query($connMysqli, "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Pending' ");
+  $CountDayLate = mysqli_num_rows($CountDayLate);
+
+  if($PendingHrsInMinutes == 0){
+    $TrainingHoursInMinutes1 = 0;
+    $TentativeHrsInMinutes = 0;
+    $CountDayTentative = 0;
+    $RemainingHrsPending = "0hrs 0min";
+    $RemainingHrsTentative = "0hrs 0min";
+    $PendingRemainingDays = "0Day/s";
+    $TentativeRemainingDays = "0Day/s";
+  }
 
 ?>
 <!DOCTYPE html>
@@ -83,8 +214,8 @@
               </div>
               <div class="ul-navigation">
                 <ul>
-                  <li onclick="tableTab(1)" class="nav-li1 active-li">Attendance (24)</li>
-                  <li onclick="tableTab(2)" class="nav-li2 inactive-li">Pending (12)</li>
+                  <li onclick="tableTab(1)" class="nav-li1 active-li"> <p class="NavAttendance">Attendance (<?php echo $CountDayRendered?>)</p></li>
+                  <li onclick="tableTab(2)" class="nav-li2 inactive-li"><p class="NavPending">Pending (<?php echo $CountDayPending?>)</p></li>
                 </ul>
               </div>
             </div>
@@ -96,30 +227,73 @@
                       <th>Date</th>
                       <th>Time In</th>
                       <th>Time Out</th>
-                      <th>Total Hours</th>
-                      <th>Late</th>
-                      <th>Overtime</th>
+                      <!-- <th>Total Hours</th> -->
+                      <th>Hour/s Rendered</th>
+                      <th>Status</th>
                       <th>Remarks</th>
                     </tr>
                   </thead>
                   <tbody class="tBody-Attendance">
                     <?php
-                      $FetchAttendance = "SELECT * FROM attendance_tb ";
+                      $FetchAttendance = "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Approved' ORDER BY attendance_id  DESC";
                       $FetchAttendance = mysqli_query($connMysqli, $FetchAttendance);
                       while ($row = mysqli_fetch_assoc($FetchAttendance)) {
                         $timeInObj = new DateTime($row['attendance_timein']);
                         $timeIn12 = $timeInObj->format('h:i A');
                         $timeOutObj = new DateTime($row['attendance_timeout']);
                         $timeOut12 = $timeOutObj->format('h:i A');
-                        $sample = "Sample";
+                        $totalHrs = $row['attendance_total'];
+
+                        preg_match('/(\d+)hrs (\d+)min/', $totalHrs, $matches);
+                        $hours = (int)$matches[1];
+                        $minutes = (int)$matches[2];
+                        // $hours -= 1;
+                        $isLate = "{$hours}hrs {$minutes}min";
+                        $rendered = "{$hours}hrs ";
+
+                        $checkTimeIn = new DateTime($timeIn12); 
+                        $checkTimeOut = new DateTime($timeOut12); 
+                        $thresholdTimeIn = new DateTime("8:00 AM");
+                        $thresholdTimeOut = new DateTime("5:00 PM");
+                        $thresholdOverTime = new DateTime("5:59 PM");
+                        if($checkTimeIn > $thresholdTimeIn && $checkTimeOut < $thresholdTimeOut) {
+                          $result = $isLate; // Assuming $isLate is defined
+                          $status = "Late, Under Time";
+                        } 
+                        else if($checkTimeOut < $thresholdTimeOut){
+                          $result = $isLate; 
+                          $status = "Under Time";
+                        }
+                        else if($checkTimeIn > $thresholdTimeIn){
+                          $result = $isLate; 
+                          $status = "Late";
+                        }
+                        else if($checkTimeOut > $thresholdOverTime){
+                          $result = $rendered; 
+                          $status = "Over Time";
+                        }
+                        else{
+                          $result = $rendered; 
+                          $status = "On Time";
+                        }
+                        
+
+
                         echo "
                           <tr class='tr-attendance'>
-                            <td ><div class='td-flex-parent'><div class='td-flex-child'><p>" . $row['attendance_date'] . "</p> <i>" . $row['attendance_day'] . "</i></div> </div></td>
+                            <td ><div class='td-flex-parent'><div class='td-flex-child'><p>" . $row['attendance_date'] . "</p> <i>" . file_get_contents('../Assets/SVG/calendar.svg') . " " .  $row['attendance_day'] . "</i></div> </div></td>
                             <td>" . $timeIn12 . "</td>
                             <td>" . $timeOut12 . "</td>
-                            <td>" . $row['attendance_total'] . "</td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                              <div class='td-flex-parent'>
+                                <div class='td-flex-child'>
+                
+                                    <li><i>Rendered: </i> " . $result . "</li>
+                                    <li><i>Total Hrs: </i> " . $totalHrs . "</li>
+                                </div> 
+                              </div>
+                            </td>
+                            <td>" . $status . "</td>
                             <td><button>View</button></td>
                           </tr>
                         ";
@@ -128,50 +302,149 @@
                     ;?>
 
 
-
                   </tbody>
                 </table>
               </div>
               <div class="table-2">
                 <div class="table-2-div">
+
                   <table>
                     <thead>
                       <tr>
                         <th>Date</th>
                         <th>Time In</th>
                         <th>Time Out</th>
-                        <th>Total Hours</th>
-                        <th>Late</th>
-                        <th>Overtime</th>
-                        <th>Remarks</th>
+                        <!-- <th>Total Hours</th> -->
+                        <th>Hour/s Rendered</th>
+                        <th>Status</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>September 18, 2024</td>
-                        <td>07:00:00 AM</td>
-                        <td>05:00:00 PM</td>
-                        <td>8:00:00</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td><button>View</button></td>
-                      </tr>
-                      <tr>
-                        <td>September 18, 2024</td>
-                        <td>07:00:00 AM</td>
-                        <td>05:00:00 PM</td>
-                        <td>8:00:00</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td><button>View</button></td>
-                      </tr>
+                    <tbody class="tBody-attendancePending">
+                      <?php
+                        $FetchAttendance = "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' AND attendance_status = 'Pending' ORDER BY attendance_id  DESC";
+                        $FetchAttendance = mysqli_query($connMysqli, $FetchAttendance);
+                        while ($row = mysqli_fetch_assoc($FetchAttendance)) {
+                          $timeInObj = new DateTime($row['attendance_timein']);
+                          $timeIn12 = $timeInObj->format('h:i A');
+                          $timeOutObj = new DateTime($row['attendance_timeout']);
+                          $timeOut12 = $timeOutObj->format('h:i A');
+                          $totalHrs = $row['attendance_total'];
+
+                          preg_match('/(\d+)hrs (\d+)min/', $totalHrs, $matches);
+                          $hours = (int)$matches[1];
+                          $minutes = (int)$matches[2];
+                          // $hours -= 1;
+                          $isLate = "{$hours}hrs {$minutes}min";
+                          $rendered = "{$hours}hrs ";
+
+
+
+
+                          $checkTimeIn = new DateTime($timeIn12); 
+                          $checkTimeOut = new DateTime($timeOut12); 
+                          $thresholdTimeIn = new DateTime("8:00 AM");
+                          $thresholdTimeOut = new DateTime("5:00 PM");
+                          $thresholdOverTime = new DateTime("5:59 PM");
+                          if($checkTimeIn > $thresholdTimeIn && $checkTimeOut < $thresholdTimeOut) {
+                            $result = $isLate; // Assuming $isLate is defined
+                            $status = "Late, Under Time";
+                          } 
+                          else if($checkTimeIn > $thresholdTimeIn && $thresholdOverTime > $thresholdTimeOut){
+                            $result = $isLate; 
+                            $status = "Late, Over Time";
+                          }
+                          else if($checkTimeOut < $thresholdTimeOut){
+                            $result = $isLate; 
+                            $status = "Under Time";
+                          }
+                          else if($checkTimeOut > $thresholdOverTime){
+                            $result = $rendered; 
+                            $status = "Over Time";
+                          }
+                          else if($checkTimeIn > $thresholdTimeIn){
+                            $result = $isLate; 
+                            $status = "Late";
+                          }
+                          else{
+                            $result = $rendered; 
+                            $status = "On Time";
+                          }
+
+
+                          echo "
+                            <tr class='tr-attendance tr-attendancePending'>
+                              <td ><div class='td-flex-parent'><div class='td-flex-child'><p>" . $row['attendance_date'] . "</p> <i>" . file_get_contents('../Assets/SVG/calendar.svg') . " " .  $row['attendance_day'] . "</i></div> </div></td>
+                              <td>" . $timeIn12 . "</td>
+                              <td>" . $timeOut12 . "</td>
+                              <td>
+                                <div class='td-flex-parent'>
+                                  <div class='td-flex-child'>
+                                      <li><i>Rendered: </i> " . $result . "</li>
+                                      <li><i>Total Hrs: </i> " . $totalHrs . "</li>
+                                  </div> 
+                                </div>
+                              </td>
+                              <td>" . $status . "</td>
+                              <td>
+                                <button>" . file_get_contents('../Assets/SVG/description.svg') . "</button>
+                                <button>" . file_get_contents('../Assets/SVG/delete.svg') . "</button>
+                              </td>
+                            </tr>
+                          ";
+                        }
+
+                      ;?>
+
+
+
                     </tbody>
                   </table>
                 </div>
-
-
+                
                 <div class="table-2-stats">
-                  <p>stats</p>
+                  <h4>Tentative Calculation</h4>
+                  <div class="table-2-statsDiv">
+
+                    <table class="table-2-container">
+                      <thead class="thead-2-stats">
+                        <tr>
+                          <td></td>
+                          <td>Pending</td>
+                          <td>Tentative</td>
+                          <td>Rendered</td>
+                        </tr>
+                      </thead>
+                      <tbody class="tbody-2-stats">
+
+                        <tr>
+                          <th>Total Hours:</th>
+                          <td><?php echo $TotalPendingDuration?></td>
+                          <td><?php echo $TotalTentativeDuration?></td>
+                          <td><?php echo $TotalRenderedDuration?></td>
+                        </tr>
+                        <tr>
+                          <th>Remaining Hours:</th>
+                          <td><?php echo $RemainingHrsPending?></td>
+                          <td><?php echo $RemainingHrsTentative?></td>
+                          <td><?php echo $RemainingHrsRendered?></td>
+                        </tr>
+                        <tr>
+                          <th>Day/s Worked:</th>
+                          <td><?php echo $CountDayPending?> Day/s</td>
+                          <td><?php echo $CountDayTentative?> Day/s</td>
+                          <td><?php echo $CountDayRendered?> Day/s</td>
+                        </tr>
+                        <tr>
+                          <th>Remaining Days:</th>
+                          <td><?php echo $PendingRemainingDays?></td>
+                          <td><?php echo $TentativeRemainingDays?></td>
+                          <td><?php echo $RenderedRemainingDays?></td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -179,12 +452,12 @@
           <div class="main-child-2">
             <div class="stats-div">
               <ul>
-                <li><i>Total Hours:</i> <span class="span-TotalHours"><h4 class="h4-TotalHours"><?php echo $TotalDuration?>  / 486hrs</h4></span></li>
-                <li><i>Remaining Hours:</i> <h4>240hrs</h4></li>
-                <li><i>Total Days:</i> <h4>34 / 60</h4></li>
-                <li><i>Total Late:</i> <h4>2</h4></li>
-                <li><i>Total Over Time:</i> <h4>5</h4></li>
-                <li><i>Total Under time:</i> <h4>2</h4></li>
+                <li><i>Total Hours:</i> <span class="span-TotalHours"><h4 class="h4-TotalHours"><?php echo $TotalRenderedDuration?> / <?php echo $TrainingHours?> </h4></span></li>
+                <li><i>Remaining Hours:</i> <h4><?php echo $RemainingHrsRendered?></h4></li>
+                <li><i>Total Days:</i> <h4><?php echo $CountDayRendered?> Day/s</h4></li>
+                <li><i>Total Late:</i> <h4 id="count-late">2</h4></li>
+                <li><i>Total Over Time:</i> <h4 id="count-ot">5</h4></li>
+                <li><i>Total Under time:</i> <h4 id="count-ut">2</h4></li>
               </ul>
             </div>
             <div class="add-attendance-container">
@@ -193,21 +466,20 @@
               </div>
               <div class="button-div">  
                 <button onclick="addNewAttendance()" class="btnAddAttendance">Add Attendance</button>
-                <button onclick="submit('insert')" class="">Submit</button>
+                <button onclick="submit('insert')" class="btnSaveAttendance">Submit Attendance</button>
               </div>
               <div class="addHidden-container">
                 <ul>
                   <li><i>Date:</i><input type="date" name="" id="stdDate"></li>
                   <li><i>Time In:</i><input type="time" onchange="submit('record')" name="pick-time" id="stdTimeIn"></li>
                   <li><i>Time Out:</i><input type="time" onchange="submit('record')" name="pick-time" id="stdTimeOut"></li>
-                  <!-- <li><i></i><p>Total: <span id="TotalWorked"> 0hrs 0min</span> | Status: Late</p> </li> -->
-                  <li><i></i><p>Total: <span id="TotalWorked"> 0hrs 0min</span> </p> </li>
+                  <li><i></i><p><span id="TotalWorked">Total: 0hrs 0min</span> </p> </li>
                 </ul>
 
                 <div class="remarks-container">
-                  <i>Notes:</i>
+                  <i>Notes: (Optional)</i>
                   <div class="remarks-div">
-                    <textarea name="" id="" placeholder="Type here"></textarea>
+                    <textarea name="" id="stdNote" placeholder="Type here"></textarea>
                   </div>
                 </div>
               </div>
