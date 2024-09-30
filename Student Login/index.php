@@ -52,7 +52,7 @@
             <p>Incorrect Username or Password!</p>
           </div>
         </div>
-        <button type="button" id="login">Login</button>
+        <button type="button" onclick="loginStudent()" id="login">Login</button>
         <!-- <button type="submit" class="login-link">Login</button> -->
 
 

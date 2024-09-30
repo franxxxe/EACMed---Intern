@@ -74,6 +74,10 @@ $(".logout-link").click(function(){
   location.href = "../Components/logout_student.php";
 })
 
+$(".home-link").click(function(){
+  location.href = "../";
+})
+
 
 
 
@@ -96,6 +100,8 @@ function loadThemeMode(ThemeMode){
     $(':root').css('--BGColor2', '#151515');
     $(':root').css('--Border1', '1px solid #31849930');
     $(':root').css('--FontColor10', '#eeeeee');
+    $(':root').css('--Overlay1', '#000000dd');
+    $(':root').css('--BGButton1', '#70987C');
     $(".light-mode").css("display","none");
     $(".dark-mode").css("display","flex");
     $(".mode-div").css("right", "1px")
@@ -106,6 +112,8 @@ function loadThemeMode(ThemeMode){
     $(':root').css('--BGColor2', '#eeeeee');
     $(':root').css('--Border1', '1px solid #00000036');
     $(':root').css('--FontColor10', '#318499b8');
+    $(':root').css('--Overlay1', '#0000009c');
+    $(':root').css('--BGButton1', '#318499');
     $(".light-mode").css("display","flex");
     $(".dark-mode").css("display","none");
     $(".mode-div").css("right", "19px")

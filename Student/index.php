@@ -131,15 +131,16 @@
   $CalcPending = $TrainingHoursInMinutes1 - $PendingHrsInMinutes;
   $CalcTentative = $TrainingHoursInMinutes1 - $TentativeHrsInMinutes;
   $CalcRendered = $TrainingHoursInMinutes - $RenderedHrsInMinutes;
+  $CalcRendered2 = $PendingHrsInMinutes - 480 ;
 
   $RemainingHrsPending = formatDuration($CalcPending);
   $RemainingHrsTentative = formatDuration($CalcTentative);
   $RemainingHrsRendered = formatDuration($CalcRendered);
 
   // CALCULATE REMAINING DAYS
-  $PendingRemainingDays = floor(($CalcPending / 60) / 8) . "Day/s";
-  $TentativeRemainingDays = floor(($CalcTentative / 60) /8) . "Day/s";
-  $RenderedRemainingDays = floor(($CalcRendered / 60) / 8) . "Day/s";
+  $PendingRemainingDays = ceil(($CalcPending / 60) / 8) . "Day/s";
+  $TentativeRemainingDays = ceil(($CalcTentative / 60) /8) . "Day/s";
+  $RenderedRemainingDays = ceil(($CalcRendered / 60) / 8) . "Day/s";
 
   // COUNT DAYS TENTATIVE
   $CountDayTentative = mysqli_query($connMysqli, "SELECT * FROM attendance_tb WHERE attendance_student_id = '$decrypted_user_id' ");
@@ -167,6 +168,21 @@
     $TentativeRemainingDays = "0Day/s";
   }
 
+  if($PendingHrsInMinutes > $CalcRendered2 && $PendingHrsInMinutes < $CalcRendered){
+    $PendingRemainingDays = "Last Day";
+    $TentativeRemainingDays = "Last Day";
+    $RemainingHrsPending = "Last Day";
+    $RemainingHrsTentative = "Last Day";
+    // if($PendingRemainingDays != "-0"){
+    //   $PendingRemainingDays = "Completed";
+    //   $TentativeRemainingDays = "Completed";
+    //   $RemainingHrsPending = "Completed";
+    //   $RemainingHrsTentative = "Completed";
+    // }
+  }
+  // echo $CalcRendered . " - " . $CalcRendered2 . " - ";
+  // echo $PendingHrsInMinutes;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -185,32 +201,46 @@
   <div class="student-root">
     <!-- HEADER -->
       <div class="header-root">
-        <div class="">
-          <h4>Alfelor, France Joshua</h4>
-          <h4>BS - Information Technology</h4>
-          <h4>National College of Science and Technology</h4>
-        </div>
-        <div class="">
-          <button class="logout-link">Logout</button>
-          <button onclick="viewID('id')">View ID</button>
-
-          
-          <div class="theme-div">
-            <div class="mode-div">
-              <?php include "../Assets/SVG/dark_mode.svg"?>
-              <?php include "../Assets/SVG/light_mode.svg"?>
+        <div class="header-overlay">
+          <div class="header-div1">
+            <div class="">
+              <img class="header-profile-img" src="../Uploaded/gallery_10.png" alt="">
+            </div>
+            <div class="student-details">
+              <h2>Alfelor, France Joshua</h2>
+              <h4>BS - Information Technology</h4>
+              <p>National College of Science and Technology</p>
             </div>
           </div>
+          <div class="header-div2">
+            <div class="theme-div">
+              <div class="mode-div">
+                <?php include "../Assets/SVG/dark_mode.svg"?>
+                <?php include "../Assets/SVG/light_mode.svg"?>
+              </div>
+            </div>
+            <ul>
+              <li class="" onclick="functionCLick('Gallery')"> <p>Gallery</p></li>
+              <li class="" onclick="functionCLick('Testimonies')"> <p>Testimonies</p></li>
+              <li class="home-link"> <p>Home</p></li>
+              <li class="logout-link"> <p>Logout</p></li>
+            </ul>
+            
+          </div>
         </div>
+        
       </div>
     <!-- END -->
     <!-- MAIN -->
-      <div class="main-root">
+      <div class="main-root"> 
         <div class="main-root-flex">
           <div class="main-child-1">
             <div class="tables-navigation">
               <div class="tables-navigation-left">
-                <input type="text" placeholder="Search">
+                <div class="search-div">
+                  <input type="text" placeholder="Search">
+                  <div class="search-icon"><?php include "../Assets/SVG/search.svg"?></div>
+                </div>
               </div>
               <div class="ul-navigation">
                 <ul>
@@ -345,15 +375,33 @@
                           $checkTimeOut = new DateTime($timeOut12); 
                           $thresholdTimeIn = new DateTime("8:00 AM");
                           $thresholdTimeOut = new DateTime("5:00 PM");
-                          $thresholdOverTime = new DateTime("5:59 PM");
+                          $thresholdOverTime = new DateTime("6:00 PM");
+                          $thresholdOverTime2 = new DateTime("5:59 PM");
                           if($checkTimeIn > $thresholdTimeIn && $checkTimeOut < $thresholdTimeOut) {
                             $result = $isLate; // Assuming $isLate is defined
                             $status = "Late, Under Time";
                           } 
-                          else if($checkTimeIn > $thresholdTimeIn && $thresholdOverTime > $thresholdTimeOut){
+
+                          else if($checkTimeIn > $thresholdTimeIn && $checkTimeOut < $thresholdOverTime){
+                            $result = $isLate; 
+                            $status = "Late";
+                          }
+                          else if($checkTimeIn > $thresholdTimeIn && $checkTimeOut > $thresholdOverTime2){
                             $result = $isLate; 
                             $status = "Late, Over Time";
                           }
+                          
+                          // else if($checkTimeIn > $thresholdTimeIn && $checkTimeOut > $thresholdTimeOut){
+                          //   $result = $isLate; 
+                          //   if($checkTimeOut < $thresholdOverTime){
+                          //     $status = "Late";
+                          //   }
+                          //   else{
+                          //     $status = "Late, Over Time";
+                          //   }
+                          // }
+
+
                           else if($checkTimeOut < $thresholdTimeOut){
                             $result = $isLate; 
                             $status = "Under Time";
@@ -361,10 +409,6 @@
                           else if($checkTimeOut > $thresholdOverTime){
                             $result = $rendered; 
                             $status = "Over Time";
-                          }
-                          else if($checkTimeIn > $thresholdTimeIn){
-                            $result = $isLate; 
-                            $status = "Late";
                           }
                           else{
                             $result = $rendered; 
@@ -490,6 +534,19 @@
         </div>
      </div>
     <!-- END -->
+    
+    <div class="modal-container">
+      <div class="modal-content">
+        <div class="content-header">
+        </div>
+        <div class="content-container">
+          <div class="hide-modal" onclick="HideModal()"><?php include "../Assets/SVG/close.svg"?></div>
+          <h2>GALLERY</h2>
+        </div>
+
+      </div>
+    </div>
+
   </div>
   <script>var StudentID = '<?= $encrypted_user_id ?>';</script>
 </body>

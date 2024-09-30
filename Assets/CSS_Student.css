@@ -12,10 +12,80 @@
 .header-root{
   min-height: 150px;
   max-height: 150px;
-  border-bottom: var(--Border1);
   background-color: var(--BGColor2);
+  background-image: url("./Images/EACMC_BG1.png");
+  background-position: 0px -160px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
+.header-overlay{
+  height: 100%;
+  width: 100%;
+  background-color: var(--Overlay1);
+  transition: background-color 2s ease;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-profile-img{
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  border: var(--Border1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+}
+
+
+.header-div1{
+  border: var(--Border1);
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #6f6f6f7a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-div1 .student-details h2,
+.header-div1 .student-details h4,
+.header-div1 .student-details p{
+  color: #a9a9a9;
+}
+
+.header-div2{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.header-div2 ul{
+  display: flex;
+  gap: 5px;
+}
+
+.header-div2 ul li{
+  display: flex;
+  justify-content: center;
+  padding: 3px;
+  height: fit-content;
+  min-width: 100px;
+  cursor: pointer;
+  border: var(--Border1);
+  background-color: #6f6f6f7a;
+}
+
+.header-div2 ul li p{
+  color: #a9a9a9;
+}
 
 .main-root{
   height: 100%;
@@ -23,6 +93,7 @@
   background-color: var(--BGColor1);
   display: flex;
   flex-direction: column;
+  box-shadow: 0 0 10px black;
   overflow: auto ;
 }
 
@@ -51,8 +122,21 @@
   padding: 3px;
 }
 
-.tables-navigation-left input{
+.tables-navigation-left .search-div{
+  display: flex;
   border: var(--Border1);
+}
+.tables-navigation-left .search-icon{
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  justify-content: center;
+  background-color: var(--BGColor1);
+  border-left: var(--Border1);
+}
+
+.tables-navigation-left .search-icon svg{
+  fill: var(--SVGFill1);
 }
 
 .ul-navigation ul{
@@ -337,4 +421,79 @@ tbody i{
 .tr-attendance button{  
   max-width: 30px;
   min-width: 30px;
+}
+
+
+
+.modal-container{
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  background-color: #00000075;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  overflow: hidden;
+  display: none;
+}
+
+
+.modal-content{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.content-header{
+  min-height: 140px;
+  max-height: 140px;
+  position: relative;
+}
+.content-header .content-header{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: yellow;
+}
+
+.content-container{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--BGColor2);
+  z-index: 2;
+  box-shadow: 0 0 150px 5px black;
+  animation-name: content-container;
+  border-top: var(--Border1);
+  animation-duration: .8s;
+  padding: 10px;
+  position: relative;
+}
+@keyframes content-container {
+  0%{
+    margin-top: 200px;
+  }
+}
+
+.hide-modal{
+  height: 38px;
+  width: 48px;
+  position: absolute;
+  right: 10px;
+  border-radius: 5px 5px 0 0;
+  top: -38px;
+  background-color: var(--BGColor2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--Border1);
+  border-bottom: none;
+}
+
+.hide-modal svg{
+  fill: var(--SVGFill1);
+  filter: drop-shadow(1px 1px 1px #00000000);
+  height: 50px;
 }

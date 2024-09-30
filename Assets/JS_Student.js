@@ -52,19 +52,10 @@ function submit(submitType) {
 }
 
 
-function viewID(viewID) {
-  var data = {
-    viewID: viewID,
-    StudentID: StudentID,
-  };
-  $.ajax({
-    url: "../Components/Function_Student.php",
-    type: "post",
-    data: data,
-    success: function (response) {
-      console.log(response);
-    },
-  });
+function functionCLick(FunctionType) {
+  if(FunctionType == "Gallery"){
+    $(".modal-container").css("display", "flex");
+  }
 }
 
 
@@ -117,6 +108,8 @@ const UTCount = countUT();
 $("#count-late").html(`${lateCount}`);
 $("#count-ot").html(`${OTCount}`);
 $("#count-ut").html(`${UTCount}`);
-// console.log(`Number of "Late": ${lateCount}`);
-// console.log(`Number of "OT": ${OTCount}`);
-// console.log(`Number of "UT": ${UTCount}`);
+
+
+function HideModal(){
+  $(".modal-container").css("display","none");
+}

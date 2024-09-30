@@ -33,9 +33,12 @@
 
   --SVGFill1: #3184997d;
 
+  --Overlay1: #0000009c;
+
   --FontColor1: #707070;
   --FontColor2: #ffffff;
   --FontColor10: #318499b8;
+  --FontColor11: #ffffff;
 
   --Border1: 1px solid #00000036;
 
@@ -45,6 +48,8 @@
   --Font_JOST: Jost;
   --Font_OSWALD: Oswald;
   --Font_SUSE: Suse;
+
+  --BGButton1: #318499;
 }
 
 
@@ -86,7 +91,12 @@ body{
 }
 
 svg{
-  fill: var(--FontColor10);
+  fill: var(--SVGFill1);
+}
+
+.student-root svg{
+  fill: var(--FontColor11);
+  filter: drop-shadow(1px 1px 1px #00000090);
 }
 
 li{
@@ -100,9 +110,10 @@ button{
   text-align: center;
   min-width: 90px;
   box-shadow: var(--BoxShadow1);
-  /* border-radius: 8px; */
   cursor: pointer;
-  background-color: var(--BGColor2);
+  color: var(--FontColor11);
+  background-color: var(--BGButton1);
+  transition: background-color 1s ease;
 }
 
 
@@ -124,7 +135,6 @@ td{
   overflow: hidden;
   text-overflow: ellipsis; 
   box-shadow: var(--BoxShadow1);
-  /* max-height: 100px; */
 }
 
 td:not(:last-child){
@@ -135,6 +145,7 @@ thead{
   position: sticky;
   top: 0;
   left: 0;
+  z-index: 1;
   background-color: var(--BGColor1);
   box-shadow: var(--BoxShadow1);
 }
@@ -224,7 +235,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
 .theme-div{
   display: flex;
   align-items: center;
-  /* justify-content: start; */
+  background-color: #bdbdbd8d;
   gap: 5px;
   height: 29px;
   width: 47px;
