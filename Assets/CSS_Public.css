@@ -238,7 +238,8 @@ input[type="password"]::-webkit-textfield-decoration-container {
   background-color: #bdbdbd8d;
   gap: 5px;
   height: 29px;
-  width: 47px;
+  min-width: 47px;
+  max-width: 47px;
   padding: 2px;
   border: var(--Border1);
   border-radius: 25px;

@@ -509,7 +509,7 @@
 
           <!-- ADMIN -->
            <div class="admin-panel main-child-admin">
-            admin
+            <button class="admin-link">Login</button>
            </div>
           <!-- END -->
         </div>

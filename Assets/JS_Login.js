@@ -4,7 +4,7 @@ $(document).on('keypress', function(event) {
   }
 });
 
-// ===================================================
+
 // SHOW PASSWORD
 const passwordInput = document.querySelector('.passwordInput');
 const showPasswordCheckbox = document.getElementById('myCheckbox');
@@ -15,7 +15,6 @@ showPasswordCheckbox.addEventListener('change', () => {
     passwordInput.setAttribute('type', 'password');
   }
 });
-
 
 
 
@@ -51,17 +50,9 @@ function userNameValidation(userName){
 }
 
 
-function PromptDiv(){
-  $(".prompt_root").css("display","flex");
-  setTimeout(() => {
-    $(".prompt_root").css("display","none");
-  }, 5000);
-}
-
 
 // ===================================================
 // STUDENT LOGIN
-
 function loginStudent(login){
   $(document).ready(function () {
     // $('#login').on('click', function (e) {
@@ -99,41 +90,6 @@ function loginStudent(login){
     // });
   });
 }
-// $(document).ready(function () {
-//   $('#login').on('click', function (e) {
-//     e.preventDefault();
-//     var username = $('#stdUsername').val();
-//     var password = $('#stdPassword').val();
-//     $.ajax({
-//       url: '../Components/Function_Student.php',
-//       type: 'POST',
-//       data: { usernameLogin: username, 
-//               passwordLogin: password,
-//             },
-//       dataType: 'json',
-//       success: function (response) {
-//         if (response.success) {
-//           window.location.href = '../Student/index.php';
-//         }
-//         else if(response.message == "Login Failed"){
-//           $("#prompt_message").html(response.message);
-//           PromptDiv();
-//         }
-//         else {
-//           $("#prompt_message").html(response.message);
-//           PromptDiv();
-//         }
-//       },
-//       error: function(xhr, status, error) {
-//         console.error("AJAX error: " + status + " - " + error);
-//         console.log("XHR Object:", xhr);
-//         console.log("Status Text:", xhr.statusText);
-//         console.log("HTTP Status Code:", xhr.status);
-//         console.log("Response Text:", xhr.responseText);
-//       }
-//     });
-//   });
-// });
 
 
 // ===================================================
@@ -184,8 +140,6 @@ $(document).ready(function () {
         console.log("HTTP Status Code:", xhr.status);
         console.log("Response Text:", xhr.responseText);
       }
-
-      
     });
   });
 });

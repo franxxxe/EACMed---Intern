@@ -78,6 +78,25 @@ $(".home-link").click(function(){
   location.href = "../";
 })
 
+$(".admin-link").click(function(){
+  location.href = "./Admin Panel";
+})
+
+
+// ===================================================
+
+
+
+// ===================================================
+// PROMPT MESSAGE
+function PromptDiv(){
+  $(".prompt_root").css("display","flex");
+  setTimeout(() => {
+    $(".prompt_root").css("display","none");
+  }, 5000);
+}
+
+
 
 
 
@@ -91,7 +110,6 @@ function loadStoredValue() {
   let storeMode = localStorage.getItem('my_variable');
   if (storeMode) {
     loadThemeMode(storeMode);
-    // console.log("Store Mode: ", storeMode);
   }
 }
 function loadThemeMode(ThemeMode){
@@ -128,12 +146,12 @@ $(document).ready(function() {
     if(StoreMode2 == "Dark"){
       loadThemeMode("Light");
       changeThemeMode("Light");
-      console.log("Light");
+      // console.log("Light");
     }
     else{
       loadThemeMode("Dark");
       changeThemeMode("Dark");
-      console.log("Dark");
+      // console.log("Dark");
     }
   })
 

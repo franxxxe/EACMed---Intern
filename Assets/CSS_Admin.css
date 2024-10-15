@@ -1,0 +1,100 @@
+.admin-root{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  background-color: var(--BGColor1);
+}
+
+.admin-flex{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.admin-sidebar{
+  min-width: 250px;
+  max-width: 250px;
+  z-index: 3;
+  box-shadow: var(--BoxShadow2);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header{
+  padding: 5px;
+  border-bottom: var(--Border1);
+}
+
+.sidebar-middle{
+  height: 100%;
+}
+
+.sidebar-content ul{
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-content ul li{
+  padding: 7px 5px;
+  border-bottom: var(--Border1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.li-active{
+  background-color: var(--BGButton1);
+  color: white;
+}
+
+.li-active p,
+.li-active i{
+  color: white;
+}
+
+.li-inactive{
+  background-color: black;
+}
+
+.li-active svg{
+  fill: white;
+}
+
+.sidebar-content ul li i{
+  min-width: 40px;
+}
+
+.sidebar-bottom{
+  padding: 5px;
+  border-top: var(--Border1);
+  display: flex;
+  gap: 10px;
+}
+.sidebar-bottom button{
+  width: 100%;
+}
+
+.mode-div{
+  min-width: fit-content;
+}
+
+
+.admin-main{
+  background-color: var(--BGColor2);
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.admin-content{
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 10px;
+}
